@@ -30,7 +30,7 @@ with st.container():
     # with col3:
         # translate_button = st.button("Translate video")
 
-model = whisper.load_model("base")
+
 st.divider()
 
 st.header("Video")
@@ -40,19 +40,29 @@ st.divider()
 # st.header("Transcription")
 transcript_container = st.container()
 transcript_container.header("Transcript")
+status_placeholder = transcript_container.empty()
 # client = OpenAI()
 # task = "Translate the following from Korean to English: "
 translate_container = st.container()
 
+model = whisper.load_model("base")
+
 if process_button:
-    
+    transcript_container.empty()
+
     if not url.startswith("http"):
         st.text("Please enter a valid URL")
         st.stop()
     yt = YouTube(url)
     print(yt)
+    video_length = yt.length
+
+    # check video length for less than 10 minutes, current Whisper max
+    if video_length > 599:
+        video_container.error("Please choose a video shorter than 10 minutes.")
+        st.stop()
     video_container.video(url)
-    transcript_container.info("Transcribing video...")
+    status_placeholder.info("Transcribing video...")
     stream = yt.streams.get_by_itag(140)
     # audio_file = stream.download(video_folder)
     audio_file = stream.download()
@@ -65,11 +75,16 @@ if process_button:
         transcript = result['text']
         from helper import format_transcript
         formatted_transcript = format_transcript(transcript)
+        
         print(formatted_transcript)
 
+        st.session_state.transcribed = "done"
         transcript_container.markdown(formatted_transcript)
+        status_placeholder.empty()
+        status_placeholder.success("Finished transcribing video")
     else:
         st.error("Please enter a valid URL")
+
 
 # if translate_button:
 #     if not url.startswith("http"):

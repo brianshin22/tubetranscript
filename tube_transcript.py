@@ -26,7 +26,7 @@ with st.container():
     with col2:
         process_button = st.button("Transcribe video")
     with col1: 
-        url = st.text_input("Enter Youtube URL below", "", label_visibility="collapsed", disabled=st.session_state.disabled, placeholder="Enter Youtube URL")
+        url = st.text_input("Enter Youtube URL below", "", label_visibility="collapsed", placeholder="Enter Youtube URL")
     # with col3:
         # translate_button = st.button("Translate video")
 
@@ -54,7 +54,8 @@ if process_button:
     video_container.video(url)
     transcript_container.info("Transcribing video...")
     stream = yt.streams.get_by_itag(140)
-    audio_file = stream.download(video_folder)
+    # audio_file = stream.download(video_folder)
+    audio_file = stream.download()
     print(audio_file)
     if audio_file is not None:
         #filepath = "/home/brian/Downloads/" + audio_file.name

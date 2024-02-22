@@ -1,7 +1,7 @@
 import streamlit as st
 import whisper
 import os
-from openai import OpenAI
+# from openai import OpenAI
 from pytube import YouTube
 
 if "visibility" not in st.session_state:

@@ -13,6 +13,7 @@ if "visibility" not in st.session_state:
 yt = None
 
 st.title("Youtube Video Transcriber")
+st.caption("A tool by Brian Shin. [brianshin.me](https://brianshin.me)")
 
 # st.sidebar.header("Translation Section")
 st.divider()
@@ -33,21 +34,21 @@ with st.container():
 
 st.divider()
 
-st.header("Video")
-video_container = st.container()
 
-st.divider()
-# st.header("Transcription")
-transcript_container = st.container()
-transcript_container.header("Transcript")
-status_placeholder = transcript_container.empty()
-# client = OpenAI()
-# task = "Translate the following from Korean to English: "
-translate_container = st.container()
 
 model = whisper.load_model("base")
 
 if process_button:
+    st.header("Video")
+    video_container = st.container()
+
+    st.divider()
+    # st.header("Transcription")
+    transcript_container = st.container()
+    transcript_container.header("Transcript")
+    status_placeholder = transcript_container.empty()
+    # client = OpenAI()
+    # task = "Translate the following from Korean to English: "
     transcript_container.empty()
 
     if not url.startswith("http"):

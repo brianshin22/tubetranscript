@@ -1,0 +1,97 @@
+import streamlit as st
+import whisper
+import os
+from openai import OpenAI
+from pytube import YouTube
+
+if "visibility" not in st.session_state:
+    st.session_state.visibility = "visible"
+    st.session_state.disabled = False
+    st.session_state.placeholder = "Enter Youtube URL"
+
+# video_folder = "/home/brian/projects/whisper/"
+yt = None
+
+st.title("Youtube Video Transcriber")
+
+# st.sidebar.header("Translation Section")
+st.divider()
+#audio_file = st.file_uploader("Upload audio", type=["wav", "mp3", "m4a"])
+
+
+# process_button = st.sidebar.button("Translate audio")
+# st.sidebar.markdown("**Note**: Processing can take up to 5 mins, please be patient.")
+with st.container():
+    col1, col2 = st.columns([6,2])
+    with col2:
+        process_button = st.button("Transcribe video")
+    with col1: 
+        url = st.text_input("Enter Youtube URL below", "", label_visibility="collapsed", disabled=st.session_state.disabled, placeholder="Enter Youtube URL")
+    # with col3:
+        # translate_button = st.button("Translate video")
+
+model = whisper.load_model("base")
+st.divider()
+
+st.header("Video")
+video_container = st.container()
+
+st.divider()
+# st.header("Transcription")
+transcript_container = st.container()
+transcript_container.header("Transcript")
+# client = OpenAI()
+# task = "Translate the following from Korean to English: "
+translate_container = st.container()
+
+if process_button:
+    
+    if not url.startswith("http"):
+        st.text("Please enter a valid URL")
+        st.stop()
+    yt = YouTube(url)
+    print(yt)
+    video_container.video(url)
+    transcript_container.info("Transcribing video...")
+    stream = yt.streams.get_by_itag(140)
+    audio_file = stream.download(video_folder)
+    print(audio_file)
+    if audio_file is not None:
+        #filepath = "/home/brian/Downloads/" + audio_file.name
+        filepath = audio_file
+        result = model.transcribe(filepath)
+
+        transcript = result['text']
+        from helper import format_transcript
+        formatted_transcript = format_transcript(transcript)
+        print(formatted_transcript)
+
+        transcript_container.markdown(formatted_transcript)
+    else:
+        st.error("Please enter a valid URL")
+
+# if translate_button:
+#     if not url.startswith("http"):
+#         st.text("Please enter a valid URL")
+#         st.stop()
+#     if yt is None:
+#         translate_container.error("Please transcribe video first")
+#         st.stop()
+#     translate_container.header("Translation")
+#     translate_container.info("Translating text...")
+    
+#     client = OpenAI()
+#     task = "Translate the following to English: "
+#     prompt = task + transcription
+
+#     chat_completion = client.chat.completions.create(
+#         messages=[
+#             {
+#                 "role": "user",
+#                 "content": prompt,
+#             }
+#         ],
+#         model="gpt-3.5-turbo",
+#     )
+#     st.markdown(chat_completion.choices[0].message.content)
+#     st.sidebar.success("Translation complete")

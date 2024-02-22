@@ -1,2 +1,2 @@
-streamllit
+streamlit
 openai-whisper

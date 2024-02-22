@@ -78,7 +78,6 @@ if process_button:
         
         print(formatted_transcript)
 
-        st.session_state.transcribed = "done"
         transcript_container.markdown(formatted_transcript)
         status_placeholder.empty()
         status_placeholder.success("Finished transcribing video")
